@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32929.386
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackupsExtra.Lib", "BackupsExtra.Lib\BackupsExtra.Lib.csproj", "{3AA47D25-03C9-4F54-903F-6344DACF4EA7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackupsExtra.Test", "BackupsExtra.Test\BackupsExtra.Test.csproj", "{482ADC9A-1562-4648-B37C-EA2A7B91A6D0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3AA47D25-03C9-4F54-903F-6344DACF4EA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AA47D25-03C9-4F54-903F-6344DACF4EA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AA47D25-03C9-4F54-903F-6344DACF4EA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AA47D25-03C9-4F54-903F-6344DACF4EA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{482ADC9A-1562-4648-B37C-EA2A7B91A6D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{482ADC9A-1562-4648-B37C-EA2A7B91A6D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{482ADC9A-1562-4648-B37C-EA2A7B91A6D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{482ADC9A-1562-4648-B37C-EA2A7B91A6D0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2335DD54-74C3-4012-9311-E4A6DD76AC5E}
+	EndGlobalSection
+EndGlobal
