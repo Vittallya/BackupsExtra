@@ -51,7 +51,7 @@ namespace BackupsExtra.Lib.BackupSystemExtended
         public void Clean()
         {
             IEnumerable<RestorePoint> pointsToRemove = cleanAlgorithm.
-                Clean(restorePoints).
+                GetPointsToClean(restorePoints).
                 OrderBy(x => x.Number);
 
             if (pointsToRemove.Any())

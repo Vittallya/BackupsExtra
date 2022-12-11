@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BackupsExtra.Lib.Loggers
+﻿namespace BackupsExtra.Lib.Loggers
 {
     public class LoggerConfiguration
     {

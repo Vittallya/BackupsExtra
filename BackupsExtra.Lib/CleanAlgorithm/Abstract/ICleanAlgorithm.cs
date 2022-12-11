@@ -11,6 +11,6 @@ namespace BackupsExtra.Lib.CleanAlgorithm
     public interface ICleanAlgorithm
     {
         //те точки, которые нужно удалить по мнению алгоритма
-        IEnumerable<RestorePoint> Clean(IEnumerable<RestorePoint> points);
+        IEnumerable<RestorePoint> GetPointsToClean(IEnumerable<RestorePoint> points);
     }
 }
