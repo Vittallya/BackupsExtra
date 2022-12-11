@@ -1,24 +1,30 @@
-﻿using Backups;
-using Backups.ArchiveSystem;
-using Backups.BackupSystem;
+﻿using Backups.BackupSystem;
 using Backups.Comparers;
 using Backups.FileSystem;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
+using Backups.Algorithms;
+using System;
+using Backups.ErrorPool;
+using BackupsExtra.Lib.BackupSystemExtended;
+using BackupsExtra.Lib.StorageSystem;
+using Backups.ArchiveSystem;
 
 namespace BackupsExtra.Lib.MergeSystem
 {
-    class Merger : IMerger
+    public class Merger : IMerger
     {
-        private readonly IZipArchiver archiver;
+        private readonly IBackupTaskExtended backupTask;
 
-        public Merger(IZipArchiver archiver)
+        public Merger(IBackupTaskExtended backupTask)
         {
-            this.archiver = archiver;
+            this.backupTask = backupTask;
         }
+
+        //для каждого IStorage нужны:
+        //1- путь (или пути к архивам)
+        //2- репозиторий архивов
+        //3- 
 
         public void Merge(RestorePoint p1, RestorePoint p2)
         {
@@ -29,7 +35,14 @@ namespace BackupsExtra.Lib.MergeSystem
             IEnumerable<IVirtualObject> exceptObjects = except.SelectMany(b => p1.Storage.GetObjects(b));
             IEnumerable<IVirtualObject> union = exceptObjects.Union(p2.Storage.GetObjects());
 
-            //todo запись в новый архив (-архивы)
+            IStorageExtended storage2 = (IStorageExtended)p2.Storage;
+
+            ISaveAlgorithm algorithm = (ISaveAlgorithm)Activator.
+                CreateInstance(
+                    Type.GetType(storage2.AlgorithmType), 
+                    new object[] { storage2.StorageRepository, storage2.BackupDir, new ZipArchiver(), new ErrorPool() });
+
+            algorithm.MakeBackup(union, backupTask.Name, p2.Number.ToString(), null);
         }
     }
 }

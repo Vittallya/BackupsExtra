@@ -1,9 +1,8 @@
 ﻿using Backups.ArchiveSystem;
 using Backups.FileSystem;
-using System;
 using System.Collections.Generic;
 using System.IO.Compression;
-using System.Text;
+using System.Linq;
 
 namespace BackupsExtra.Lib.ArchiveSystemExtended
 {
@@ -14,7 +13,7 @@ namespace BackupsExtra.Lib.ArchiveSystemExtended
             using var archStream = rep.OpenWrite(path);
             using ZipArchive zipArchive = new ZipArchive(archStream, ZipArchiveMode.Create, true);
             IZipVisitor visitor = new ZipCompressVisitor(zipArchive);
-            obj.ToList().ForEach(x => x.Accept(visitor, x.Parent));
+            objects.ToList().ForEach(x => x.Accept(visitor, x.Parent));
             return visitor.Entries.Select(x => x.FullName);
         }
     }
