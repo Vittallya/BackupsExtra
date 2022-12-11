@@ -14,7 +14,7 @@ using System.Text;
 
 namespace BackupsExtra.Lib.SaveAlgorithmsExtended
 {
-    public class SingleAlgorithmExtended : SaveAlgorithm
+    public class SingleAlgorithmExtended : SaveAlgorithmExtended
     {
         public SingleAlgorithmExtended(IRepository fileSystem, string backupDir, IZipArchiver archiver, ILogger errorPool) : base(fileSystem, backupDir, archiver, errorPool)
         {
@@ -31,6 +31,9 @@ namespace BackupsExtra.Lib.SaveAlgorithmsExtended
             });
 
             IEnumerable<string> archiveStructure = Archiver.Archive(objects, relativePathToArchive, Repository);
+
+            errorPool.LogMessage($"For single algoritm perfomed backup; {objects.Count()} - objects was backuped");
+
             return new ZipStorageExtended(GetType().Name, BackupDir, Repository, new[] { relativePathToArchive}, archiveStructure, backups, relativePathToArchive);
         }
     }

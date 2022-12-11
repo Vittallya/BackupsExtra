@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace BackupsExtra.Lib.SaveAlgorithmsExtended
 {
-    public class SplitAlgorithmExtended : SaveAlgorithm
+    public class SplitAlgorithmExtended : SaveAlgorithmExtended
     {
         public SplitAlgorithmExtended(IRepository fileSystem, string backupDir, IZipArchiver archiver, ILogger errorPool) : base(fileSystem, backupDir, archiver, errorPool)
         {
@@ -27,6 +27,7 @@ namespace BackupsExtra.Lib.SaveAlgorithmsExtended
                 BackupObject obj = new BackupObject(x.RelativePath, repository, structure);
                 return new ZipStorageExtended(GetType().Name, BackupDir, Repository, new[] {relativePathToArchive }, structure, new List<BackupObject> { obj }, relativePathToArchive);
             });
+            errorPool.LogMessage($"For split algoritm perfomed backup; {objects.Count()} - objects was backuped");
 
             return new SplitStorageExtended(storages, GetType().Name, BackupDir, Repository, Path.Combine(BackupDir, backupName, restorePointName));
         }

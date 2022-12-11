@@ -1,13 +1,13 @@
 ﻿using Backups.Algorithms;
 using Backups.BackupSystem;
 using Backups.Comparers;
+using Backups.ErrorPool;
 using Backups.FileSystem;
 using BackupsExtra.Lib.CleanAlgorithm;
 using BackupsExtra.Lib.MergeSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace BackupsExtra.Lib.BackupSystemExtended
 {
@@ -17,6 +17,7 @@ namespace BackupsExtra.Lib.BackupSystemExtended
 
         private readonly List<IVirtualObject> currentTrackingObjects;
         private readonly string taskName;
+        private readonly ILogger logger;
         private List<RestorePoint> restorePoints;
         private ISaveAlgorithm saveAlgorithm;
         private IRepository repository;
@@ -26,18 +27,21 @@ namespace BackupsExtra.Lib.BackupSystemExtended
         public BackupTaskExtended(string taskName,
                                   ISaveAlgorithm saveAlgorithm,
                                   IRepository repository,
-                                  ICleanAlgorithm cleanAlgorithm, IMerger merger)
+                                  ICleanAlgorithm cleanAlgorithm, 
+                                  ILogger logger,
+                                  IMerger merger)
         {
             this.taskName = taskName;
             this.saveAlgorithm = saveAlgorithm;
             this.repository = repository;
             this.cleanAlgorithm = cleanAlgorithm;
+            this.logger = logger;
             this.merger = merger;
             currentTrackingObjects = new List<IVirtualObject>();
             restorePoints = new List<RestorePoint>();
         }
 
-        public string Name => throw new NotImplementedException();
+        public string Name => taskName;
 
         public void ChangeBackupDirectory(string newDir)
         {
@@ -68,7 +72,14 @@ namespace BackupsExtra.Lib.BackupSystemExtended
                     firstToRemove = p;
                 });
 
+                int count = pointsToRemove.Count();
+
                 restorePoints = pointsToSave.ToList();
+                logger.LogMessage($"Back task '{taskName}' perfomed cleaning; ${count} restore points was cleaned");
+            }
+            else
+            {
+                logger.LogWarning($"For backup task '{taskName}' was attemt to clean; no restore points to clean was found");
             }
         }
 
@@ -79,7 +90,19 @@ namespace BackupsExtra.Lib.BackupSystemExtended
 
         public void MakeBackup()
         {
-            throw new NotImplementedException();
+            int count = restorePoints.Count;
+            try
+            {
+                var storage = saveAlgorithm.MakeBackup(currentTrackingObjects, taskName, (count + 1).ToString(), repository);
+                var rp = new RestorePoint(count + 1, DateTime.Now, storage);
+                restorePoints.Add(rp);
+                logger.LogMessage($"For backup task '{taskName}' created new backup with number {count + 1}");
+            }
+            catch(Exception e)
+            {
+                logger.AddError(e);
+                logger.LogError(e.Message);
+            }
         }
 
         public bool RollbackToPoint(int pointNum)
