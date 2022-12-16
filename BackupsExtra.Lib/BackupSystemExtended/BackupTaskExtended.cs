@@ -5,6 +5,8 @@ using Backups.ErrorPool;
 using Backups.FileSystem;
 using BackupsExtra.Lib.CleanAlgorithm;
 using BackupsExtra.Lib.MergeSystem;
+using BackupsExtra.Lib.SaveAlgorithmsExtended;
+using BackupsExtra.Lib.SerializeSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,41 +16,30 @@ namespace BackupsExtra.Lib.BackupSystemExtended
     public class BackupTaskExtended : IBackupTaskExtended
     {
         public IEnumerable<RestorePoint> RestorePoints => restorePoints;
+        public string Name => taskName;
+        public IEnumerable<string> CurrentTrackingObjects => currentTrackingObjects.Select(x => x.RelativePath);
 
         private readonly List<IVirtualObject> currentTrackingObjects;
         private readonly string taskName;
-        private readonly ILogger logger;
         private List<RestorePoint> restorePoints;
-        private ISaveAlgorithm saveAlgorithm;
-        private IRepository repository;
-        private ICleanAlgorithm cleanAlgorithm;
-        private IMerger merger;
 
-        public BackupTaskExtended(string taskName,
-                                  ISaveAlgorithm saveAlgorithm,
-                                  IRepository repository,
-                                  ICleanAlgorithm cleanAlgorithm, 
-                                  ILogger logger,
-                                  IMerger merger)
+
+        public BackupTaskExtended(string taskName)
         {
             this.taskName = taskName;
-            this.saveAlgorithm = saveAlgorithm;
-            this.repository = repository;
-            this.cleanAlgorithm = cleanAlgorithm;
-            this.logger = logger;
-            this.merger = merger;
             currentTrackingObjects = new List<IVirtualObject>();
             restorePoints = new List<RestorePoint>();
         }
 
-        public string Name => taskName;
-
-        public void ChangeBackupDirectory(string newDir)
+        public BackupTaskExtended(string taskName,
+                                  IEnumerable<IVirtualObject> currentTracking,
+                                  IEnumerable<RestorePoint> restorePoints): this(taskName)
         {
-            saveAlgorithm.SetBackupDirectory(newDir);
+            currentTrackingObjects = currentTracking.ToList();
+            this.restorePoints = restorePoints.ToList();
         }
 
-        public void Clean()
+        public void Clean(ICleanAlgorithm cleanAlgorithm, IMerger merger, ILogger logger)
         {
             IEnumerable<RestorePoint> pointsToRemove = cleanAlgorithm.
                 GetPointsToClean(restorePoints).
@@ -88,7 +79,7 @@ namespace BackupsExtra.Lib.BackupSystemExtended
             currentTrackingObjects.Remove(obj);
         }
 
-        public void MakeBackup()
+        public void MakeBackup(SaveAlgorithmExtended saveAlgorithm, IRepository repository, ILogger logger)
         {
             int count = restorePoints.Count;
             try
@@ -110,19 +101,14 @@ namespace BackupsExtra.Lib.BackupSystemExtended
             throw new NotImplementedException();
         }
 
-        public void SetupCleanAlgorithm(ICleanAlgorithm cleanAlgorithm)
-        {
-            this.cleanAlgorithm = cleanAlgorithm;
-        }
-
-        public void SetupSaveAlgorithm(ISaveAlgorithm algorithm)
-        {
-            saveAlgorithm = algorithm;
-        }
-
         public void StartTrackingForObject(IVirtualObject obj)
         {
             currentTrackingObjects.Add(obj);
+        }
+
+        public void Accept(ISerializeVisitor visitor)
+        {
+            visitor.Visit(this);
         }
     }
 }
