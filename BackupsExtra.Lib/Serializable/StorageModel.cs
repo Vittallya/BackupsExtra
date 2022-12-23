@@ -6,6 +6,12 @@ namespace BackupsExtra.Lib.Serializable
     {
         public string AlgorithmType { get; set; }
 
+        public string StorageType { get; set; }
+
+        public IEnumerable<StorageModel> InnerZipStorages { get; set; }
+
+        public IEnumerable<string> ZipStorageStructure { get; set; }
+
         /// <summary>
         /// Папка хранения стораджа в репозитории
         /// </summary>
