@@ -21,7 +21,7 @@ namespace BackupsExtra.Lib.BackupSystemExtended
         void ClearTrackingForObject(Func<IRepository, IVirtualObject> getter);
         void StartTrackingForObject(Func<IRepository, IVirtualObject> getter);
         void MakeBackup(SaveAlgorithmExtended saveAlgorithm, ILogger logger);
-        bool RollbackToPoint(int pointNum);
+        bool RollbackToPoint(RestorePoint rp, IRepository repo = null);
         void Clean(ICleanAlgorithm cleanAlgorithm, IMerger merger, ILogger logger);
     }
 }

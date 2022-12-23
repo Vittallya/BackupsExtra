@@ -117,5 +117,24 @@ namespace BackupsExtra.Lib.BackupSystemExtended
         {
             visitor.Visit(this);
         }
+
+        public bool RollbackToPoint(RestorePoint rp, IRepository repo = null)
+        {
+            IRepository target = repo ?? filesRepository;
+
+            rp.Storage.Backups.ToList().ForEach(x =>
+            {
+                if (x is IVirtualDirectory dir)
+                    target.CreateDirectory(dir.RelativePath);
+                else if(x is IVirtualFile file)
+                {
+                    using var str = file.GetStream();
+                    using var targetStr = target.OpenWrite(file.RelativePath);
+                    str.CopyTo(targetStr);
+                }
+
+            });
+            return true;
+        }
     }
 }
